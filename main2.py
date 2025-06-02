@@ -12,7 +12,8 @@ def validity_check(M, W):
     CV = M @ W / W
     eigen = np.mean(CV)
     CI = (eigen - banyak) / (banyak - 1)
-    RI_value = RI.get(banyak, 1.12)  # Default RI for banyak=5
+    RI_value = RI.get(banyak, 1.12) 
+    # print(RI_value)
     CR = CI / RI_value
 
     st.markdown("### Consistency Check")
@@ -85,9 +86,13 @@ with tab3:
         st.write(weights)
 
         validity_check(pairwise_matrix, weights)
+        reverse_criteria = ["Job_Duration_Days"]
 
         for col in criteria_names:
-            df_sorted[f"Normalized_{col}"] = (df_sorted[col]  - df_sorted[col].min()) /(df_sorted[col].max()- df_sorted[col].min())
+            if col in reverse_criteria:
+                df_sorted[f"Normalized_{col}"] = 1 - ((df_sorted[col] - df_sorted[col].min()) / (df_sorted[col].max() - df_sorted[col].min()))
+            else:
+                df_sorted[f"Normalized_{col}"] = (df_sorted[col] - df_sorted[col].min()) / (df_sorted[col].max() - df_sorted[col].min())
         
         df_sorted["final_score"] = sum(
         df_sorted[f"Normalized_{name}"] * weights[i]
